@@ -25,11 +25,12 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 3;
+  std_a_ = 1.5; //3 is for a car
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 1.5; //~pi/2
+  std_yawdd_ = 3.14 / 8; //~pi/2
 
+  // Measurement noise. No need to tweak
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
 
@@ -109,6 +110,14 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0.0, 0.0, 0.0;
     }
 
+    //Covariant matrix
+
+    P_ << 1, 0, 0, 0, 0,
+      0, 1, 0, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1;
+
     //measurement matrix
 
     // done initializing, no need to predict or update
@@ -141,10 +150,6 @@ void UKF::AugmentedSigmaPoints(MatrixXd* Xsig_out) {
   //create sigma point matrix
   MatrixXd Xsig_aug = MatrixXd(n_aug_, 2 * n_aug_ + 1);
 
-/*******************************************************************************
- * Student part begin
- ******************************************************************************/
-
   //create augmented mean state
   x_aug.head(5) = x_;
   x_aug(5) = 0;
@@ -167,26 +172,19 @@ void UKF::AugmentedSigmaPoints(MatrixXd* Xsig_out) {
     Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda_+n_aug_) * L.col(i);
   }
 
-/*******************************************************************************
- * Student part end
- ******************************************************************************/
-
-  //print result
-  std::cout << "Xsig_aug = " << std::endl << Xsig_aug << std::endl;
-
   //write result
   *Xsig_out = Xsig_aug;
 
 
 }
 
-void UKF::SigmaPointPrediction(MatrixXd* Xsig_out) {
+void UKF::SigmaPointPrediction(MatrixXd* Xsig_out, double delta_t) {
 
   MatrixXd Xsig_aug = *Xsig_out;
   //create matrix with predicted sigma points as columns
   MatrixXd Xsig_pred = MatrixXd(n_x_, 2 * n_aug_ + 1);
 
-  double delta_t = 0.1; //time diff in sec
+  //double delta_t = 0.1; //time diff in sec
 
   //predict sigma points
   for (int i = 0; i< 2*n_aug_+1; i++)
@@ -315,7 +313,7 @@ void UKF::Prediction(double delta_t) {
 
   MatrixXd xSig;
   AugmentedSigmaPoints(&xSig);
-  SigmaPointPrediction(&xSig);
+  SigmaPointPrediction(&xSig, delta_t);
   Xsig_pred_ = xSig;
   PredictMeanAndCovariance(&x_, &P_);
 

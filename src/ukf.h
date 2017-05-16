@@ -126,7 +126,7 @@ public:
      *
      * @param Xsig_out
      */
-    void SigmaPointPrediction(MatrixXd *Xsig_out);
+    void SigmaPointPrediction(MatrixXd *Xsig_out, double delta_t);
     /**
      *
      * @param x_pred
