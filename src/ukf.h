@@ -113,9 +113,6 @@ public:
 
     long long int previous_timestamp_;
 
-
-    double normalizeFi(double &d);
-
     /**
      *
      * @param Xsig_out
