@@ -113,11 +113,26 @@ public:
 
     long long int previous_timestamp_;
 
+
     double normalizeFi(double &d);
 
+    /**
+     *
+     * @param Xsig_out
+     */
     void AugmentedSigmaPoints(MatrixXd *Xsig_out);
 
+    /**
+     *
+     * @param Xsig_out
+     */
     void SigmaPointPrediction(MatrixXd *Xsig_out);
+    /**
+     *
+     * @param x_pred
+     * @param P_pred
+     */
+    void PredictMeanAndCovariance(VectorXd* x_pred, MatrixXd* P_pred);
 };
 
 #endif /* UKF_H */
