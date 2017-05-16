@@ -109,7 +109,6 @@ public:
    */
   void UpdateRadar(MeasurementPackage meas_package);
 
-    void GenerateSigmaPoints();
 
     long long int previous_timestamp_;
 
